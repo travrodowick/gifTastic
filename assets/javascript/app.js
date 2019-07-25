@@ -1,7 +1,6 @@
 $(document).ready(function () {
     // Initial array of GIF TOPICS
     var gifTopics = ["hockey", "mountain bike", "snowboard", "wake surf", "wakeboard", "football", "boxing", "piano", "guitar"];
-
     //GRAB VALUE FROM INPUT FORM=====================================================
     $("#add-gif").on("click", function (event) {
         event.preventDefault();
@@ -9,10 +8,8 @@ $(document).ready(function () {
         gifTopics.push(newGif);
         // calling renderButtons which handles the processing of our gif array
         renderButtons();
-        console.log(event)
     });
-
-    // Function for displaying GIFS AND data========================================================
+    // Function for displaying buttons========================================================
     function renderButtons() {
         // Deleting the gif buttons prior to adding new gif buttons
         $("#append-buttons-here").empty();
@@ -24,13 +21,12 @@ $(document).ready(function () {
             newButton.addClass("gif");
             // Adding a data-attribute with a value of the gif at index i
             newButton.attr("data-name", gifTopics[i]);
-            // Providing the button's text with a value of the movie at index i
+            // Providing the button's text with a value of the gif at index i
             newButton.text(gifTopics[i]);
             // Adding the button to the HTML
             $("#append-buttons-here").append(newButton);
         };
     };
-
     // Calling the renderButtons function at least once to display the initial list of gif
     renderButtons();
 
@@ -49,14 +45,12 @@ $(document).ready(function () {
             $(this).attr("data-state", "still");
         }
     });
-
     $(document).on('click', '.gif', function () {
-        //AJAX CALL===========still same onClick function====================
+        //AJAX CALL=========== onClick of topic button function====================
         var newGif = $(this).attr("data-name")
         // Constructing a queryURL using the gif topic
         var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
             newGif + "&api_key=hKqkRMJgjLRtvSchAWSTMRDVHQD3539N&limit=10";
-
         // Performing an AJAX request with the queryURL
         $.ajax({
             url: queryURL,
@@ -64,8 +58,6 @@ $(document).ready(function () {
         })
             // After data comes back from the request
             .then(function (response) {
-                console.log(queryURL);
-                console.log(response);
                 // storing the data from the AJAX request in the results variable
                 var results = response.data;
                 // Looping through each result item
@@ -73,17 +65,11 @@ $(document).ready(function () {
                     // Creating and storing a div tag
                     var hobbiesDiv = $("<div>");
                     // Creating a paragraph tag with the result item's rating
-                    var title = $("<p>").text("Rating: " + results[i].rating);
-                    var tags = $("<p>").text("Tags: " + results[i].tags);
-                    // var # = $("<p>").text("#: " + results[i].#);
+                    var title = $("<p>").text("Title: " + results[i].title);
+                    var rating = $("<p>").text("Rating: " + results[i].rating);
                     // Creating and storing an image tag
-
-                    console.log('****', results)
-
                     var still = results[i].images.fixed_height_still.url
                     var animate = results[i].images.fixed_height.url
-
-
                     var hobbiesImg = $("<img>");
                     // Setting the src attribute of the image to a property pulled off the result item
                     hobbiesImg.attr("src", still);
@@ -93,7 +79,7 @@ $(document).ready(function () {
                     hobbiesImg.attr("data-still", still)
                     // Appending the paragraph and image tag to the hobbiesDiv
                     hobbiesDiv.append(title);
-                    hobbiesDiv.append(tags);
+                    hobbiesDiv.append(rating);
                     hobbiesDiv.append(hobbiesImg);
                     // Prependng the hobbiesDiv to the HTML page in the "#gifs-appear-here" div
                     $("#gifs-appear-here").prepend(hobbiesDiv);
@@ -102,8 +88,5 @@ $(document).ready(function () {
             });
     })
 
-
     //=========================TROUBLESHOOTING=================================================
-    console.log('ready')
-    console.log(gifTopics)
 });
